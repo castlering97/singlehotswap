@@ -29,7 +29,7 @@ intellijPlatform {
 
 dependencies {
     intellijPlatform {
-        intellijIdeaCommunity("2024.2.0.2")
+        intellijIdeaCommunity("2024.3.3")
 
         // https://plugins.jetbrains.com/docs/intellij/plugin-dependencies.html#bundled-and-other-plugins
         bundledPlugin("com.intellij.java")
