@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>net.labymod.intellij.singlehotswap</id>
     <name>Single Hotswap</name>
-    <version>2.10</version>
+    <version>3.0</version>
     <vendor email="labystudio@gmail.com" url="https://www.labymod.net">LabyMedia</vendor>
 
     <idea-version since-build="203.000"/>
@@ -24,7 +24,6 @@
     <depends optional="true" config-file="singleHotSwap-kotlin.xml">org.jetbrains.kotlin</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <notificationGroup id="SingleHotswap" displayType="BALLOON"/>
         <notificationGroup id="SingleCompile" displayType="BALLOON" isLogByDefault="true"/>
 
         <!-- Settings Configuration -->
@@ -40,24 +39,16 @@
     </extensions>
 
     <actions>
-        <action id="SingleHotswap"
-                class="net.labymod.intellij.singlehotswap.actions.SingleHotswapAction"
-                text="Single Hotswap" description="Hotswap just the opened file"
-                icon="SingleHotSwapIcons.SINGLE_HOTSWAP">
-            <add-to-group anchor="before" group-id="ToolbarRunGroup"
-                          relative-to-action="RunConfiguration"/>
-        </action>
-        <action id="SingleHotswapRedesign"
-                class="net.labymod.intellij.singlehotswap.actions.SingleHotswapAction"
-                text="Single Hotswap" description="Hotswap just the opened file"
-                icon="SingleHotSwapIcons.SINGLE_HOTSWAP_REDESIGN">
-            <add-to-group anchor="before" group-id="RunToolbarMainActionGroup"
-                          relative-to-action="MoreRunToolbarActions"/>
+        <action id="SingleHotswap" class="net.labymod.intellij.singlehotswap.actions.SingleHotswapAction" text="Single Hotswap" description="Hotswap just the opened file" icon="SingleHotSwapIcons.SINGLE_HOTSWAP">
+            <add-to-group group-id="BuildMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group anchor="before" group-id="RunToolbarMainActionGroup" relative-to-action="MoreRunToolbarActions"/>
         </action>
         <action id="SingleCompileAction" class="net.labymod.intellij.singlehotswap.actions.SingleCompileAction" text="Compile Single File">
             <add-to-group group-id="BuildMenu" anchor="last"/>
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift C"/>
+            <add-to-group anchor="before" group-id="RunToolbarMainActionGroup" relative-to-action="MoreRunToolbarActions"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt C"/>
         </action>
     </actions>
 
