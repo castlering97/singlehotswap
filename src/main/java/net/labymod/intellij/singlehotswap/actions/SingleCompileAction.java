@@ -20,6 +20,8 @@ import net.labymod.intellij.singlehotswap.compiler.impl.BuiltInJavaCompiler;
 import net.labymod.intellij.singlehotswap.hotswap.ClassFile;
 import net.labymod.intellij.singlehotswap.hotswap.impl.AbstractContext;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -92,6 +94,18 @@ public class SingleCompileAction extends CompileAction {
                 long duration = System.currentTimeMillis() - start;
                 notifyUser("Compiled " + classFiles.size() + " classes in " + duration + "ms", NotificationType.INFORMATION);
 
+
+                // Copy to clipboard
+                String classFilePath = outputFile.getClassPath();
+                String curlCommand = String.format("curl -F \"file=@%s\" http://{your_pod_ip}:8000", classFilePath);
+
+                // Copy to clipboard
+                Toolkit.getDefaultToolkit()
+                        .getSystemClipboard()
+                        .setContents(new StringSelection(curlCommand), null);
+
+                // Optionally notify user
+                notifyUser("Copied curl command to clipboard", NotificationType.INFORMATION);
             } catch (FileNotFoundException e) {
                 notifyUser("Could not find output class file: " + e.getMessage(), NotificationType.ERROR);
             } catch (Exception e) {
