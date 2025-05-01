@@ -155,7 +155,7 @@ public class SingleHotswapAction extends CompileAction {
                             long start = System.currentTimeMillis();
 
                             // Compile the current opened file
-                            List<ClassFile> classFiles = compiler.compile(module, sourceFile, outputFile);
+                            List<ClassFile> classFiles = compiler.compile(module, sourceFile, outputFile)._1;
                             if (classFiles.isEmpty()) {
                                 String message = "Could not compile " + psiFile.getName();
                                 progress.addMessage(debugger, MessageCategory.ERROR, message);

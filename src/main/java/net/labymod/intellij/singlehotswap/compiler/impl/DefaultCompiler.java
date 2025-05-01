@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.task.ProjectTaskManager;
 import com.intellij.task.ProjectTaskManager.Result;
 import com.intellij.task.impl.ModuleFilesBuildTaskImpl;
+import io.vavr.Tuple2;
 import net.labymod.intellij.singlehotswap.compiler.AbstractCompiler;
 import net.labymod.intellij.singlehotswap.hotswap.ClassFile;
 import net.labymod.intellij.singlehotswap.hotswap.Context;
@@ -28,7 +29,7 @@ public class DefaultCompiler extends AbstractCompiler {
     }
 
     @Override
-    public List<ClassFile> compile(Module module, VirtualFile sourceFile, ClassFile outputFile) throws Exception {
+    public Tuple2<List<ClassFile>, String> compile(Module module, VirtualFile sourceFile, ClassFile outputFile) throws Exception {
         List<ClassFile> classFiles = new ArrayList<>();
 
         Project project = outputFile.getProject();
@@ -51,7 +52,7 @@ public class DefaultCompiler extends AbstractCompiler {
 
         // Check for errors
         if (result == null || result.hasErrors() || result.isAborted()) {
-            return classFiles;
+            return new Tuple2<>(classFiles, null);
         }
 
         // Add the compiled output file to the list
@@ -60,6 +61,6 @@ public class DefaultCompiler extends AbstractCompiler {
         // Add the inner class files to the list
         classFiles.addAll(this.context.getInnerClassFiles(outputFile));
 
-        return classFiles;
+        return new Tuple2<>(classFiles, null);
     }
 }

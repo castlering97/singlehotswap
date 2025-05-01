@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
+import io.vavr.Tuple2;
 import net.labymod.intellij.singlehotswap.compiler.impl.BuiltInJavaCompiler;
 import net.labymod.intellij.singlehotswap.hotswap.ClassFile;
 import net.labymod.intellij.singlehotswap.hotswap.impl.AbstractContext;
@@ -83,7 +84,9 @@ public class SingleCompileAction extends CompileAction {
 
                 // Compile
                 long start = System.currentTimeMillis();
-                List<ClassFile> classFiles = compiler.compile(module, sourceFile, outputFile);
+                Tuple2<List<ClassFile>, String> compileResultTuple = compiler.compile(module, sourceFile, outputFile);
+                List<ClassFile> classFiles = compileResultTuple._1;
+                String outputMessage = compileResultTuple._2;
                 
                 if (classFiles.isEmpty()) {
                     notifyUser("Could not compile " + psiFile.getName(), NotificationType.ERROR);
@@ -95,17 +98,17 @@ public class SingleCompileAction extends CompileAction {
                 notifyUser("Compiled " + classFiles.size() + " classes in " + duration + "ms", NotificationType.INFORMATION);
 
 
-                // Copy to clipboard
-                String classFilePath = outputFile.getClassPath();
-                String curlCommand = String.format("curl -F \"file=@%s\" http://{your_pod_ip}:8000", classFilePath);
+                // build curl command
+                String curlCommand = String.format("curl -F \"file=@%s\" http://{your_pod_ip}:8000", outputMessage);
 
                 // Copy to clipboard
                 Toolkit.getDefaultToolkit()
                         .getSystemClipboard()
                         .setContents(new StringSelection(curlCommand), null);
 
-                // Optionally notify user
-                notifyUser("Copied curl command to clipboard", NotificationType.INFORMATION);
+                // Notify curl copied
+                notifyUser("ClipboardAction", "ClipboardAction", "Copied curl command to clipboard", NotificationType.INFORMATION);
+
             } catch (FileNotFoundException e) {
                 notifyUser("Could not find output class file: " + e.getMessage(), NotificationType.ERROR);
             } catch (Exception e) {
@@ -143,6 +146,11 @@ public class SingleCompileAction extends CompileAction {
 
     private void notifyUser(String message, NotificationType type) {
         Notification notification = new Notification("SingleCompile", "Single Compile", message, type);
+        Notifications.Bus.notify(notification);
+    }
+
+    private void notifyUser(String groupId, String title, String message, NotificationType type) {
+        Notification notification = new Notification(groupId, title, message, type);
         Notifications.Bus.notify(notification);
     }
 

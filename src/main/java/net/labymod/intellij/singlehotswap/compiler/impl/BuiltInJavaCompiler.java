@@ -9,6 +9,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import io.vavr.Tuple2;
 import net.labymod.intellij.singlehotswap.compiler.AbstractCompiler;
 import net.labymod.intellij.singlehotswap.hotswap.ClassFile;
 import net.labymod.intellij.singlehotswap.hotswap.Context;
@@ -34,7 +35,7 @@ public class BuiltInJavaCompiler extends AbstractCompiler {
     }
 
     @Override
-    public List<ClassFile> compile(Module module, VirtualFile sourceFile, ClassFile outputFile) throws Exception {
+    public Tuple2<List<ClassFile>/*CompiledClassFiles*/, String/*classFileOutputPath*/> compile(Module module, VirtualFile sourceFile, ClassFile outputFile) throws Exception {
         File file = VfsUtil.virtualToIoFile(sourceFile);
 
         // Find current module
@@ -80,6 +81,7 @@ public class BuiltInJavaCompiler extends AbstractCompiler {
 
         // Write files to output directory and return the class files
         List<ClassFile> classFiles = new ArrayList<>();
+        String finalOutputPath = "";
         for (ClassObject classObject : result) {
             byte[] bytes = classObject.getContent();
             if (bytes == null) {
@@ -90,13 +92,16 @@ public class BuiltInJavaCompiler extends AbstractCompiler {
             File compiledFile = new File(classObject.getPath());
             FileUtil.writeToFile(compiledFile, bytes);
 
+            // get final output path of compiled file
+            finalOutputPath = compiledFile.getAbsolutePath();
+
             // filter out any non-class-objects generated (e. g. files from annotation processing)
             if (classObject.getClassName() != null) {
                 // Add class file to list
                 classFiles.add(ClassFile.fromClassObject(project, classObject));
             }
         }
-        return classFiles;
+        return new Tuple2<>(classFiles, finalOutputPath);
     }
 
 }
