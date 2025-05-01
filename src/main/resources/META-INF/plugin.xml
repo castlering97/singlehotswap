@@ -25,6 +25,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="SingleHotswap" displayType="BALLOON"/>
+        <notificationGroup id="SingleCompile" displayType="BALLOON" isLogByDefault="true"/>
 
         <!-- Settings Configuration -->
         <applicationService id="SingleHotswapConfiguration"
@@ -52,6 +53,11 @@
                 icon="SingleHotSwapIcons.SINGLE_HOTSWAP_REDESIGN">
             <add-to-group anchor="before" group-id="RunToolbarMainActionGroup"
                           relative-to-action="MoreRunToolbarActions"/>
+        </action>
+        <action id="SingleCompileAction" class="net.labymod.intellij.singlehotswap.actions.SingleCompileAction" text="Compile Single File">
+            <add-to-group group-id="BuildMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift C"/>
         </action>
     </actions>
 
